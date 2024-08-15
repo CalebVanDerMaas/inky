@@ -94,7 +94,7 @@ text_mask = create_mask(text, [inky_display.WHITE])
 # See: http://pillow.readthedocs.io/en/3.1.x/reference/Image.html?highlight=paste#PIL.Image.Image.paste
 
 # Load our backdrop image
-img = Image.open(os.path.join(PATH, "resources/adelleTest.png")).resize(inky_display.resolution)
+img = Image.open(os.path.join(PATH, "resources/profPicInky.png")).resize(inky_display.resolution)
 draw = ImageDraw.Draw(img)
 
 # # Grab the current date, and prepare our calendar
