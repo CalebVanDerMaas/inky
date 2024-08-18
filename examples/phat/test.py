@@ -107,18 +107,19 @@ microFontDict = {'a': (0, 0, 4, 4), 'b': (4, 0, 8, 4), 'c': (8, 0, 12, 4), 'd': 
 
 outputString = "This is a test. The quick brown fox jumps over the lazy dog."
 
-def build_image(input_string, start_pos, dest_image):
+def build_image(input_string, start_pos):
+    destination_image = Image.new('P', (250, 122))
     lower_string = input_string.lower()
     for char in lower_string:
         crop_region = microFontDict[char]
         char_image = micro_font_sprites.crop(crop_region)
-        dest_image.paste(char_image, start_pos)
+        destination_image.paste(char_image, start_pos)
         temp_list = list(start_pos)
         temp_list[0] += 4
         start_pos = tuple(temp_list)
-    return dest_image
+    return destination_image
 
-destination_image = build_image(outputString, (0,0), destination_image)
+destination_image = build_image(outputString, (0,0))
 
 # col_w = 20
 # col_h = 13
