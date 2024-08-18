@@ -40,6 +40,7 @@ def fetch_gps_data():
                     return parse_gprmc(line)
     except Exception as e:
         print(f"Error fetching GPS data: {e}")
+        time.sleep(5)
     return None
 
 def main():
