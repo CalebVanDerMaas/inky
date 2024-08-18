@@ -111,7 +111,8 @@ def build_image(input_string, start_pos, dest_image):
     lower_string = input_string.lower()
     for char in lower_string:
         crop_region = microFontDict[char]
-        dest_image.paste(crop_region, start_pos)
+        char_image = micro_font_sprites.crop(crop_region)
+        dest_image.paste(char_image, start_pos)
         temp_list = list(start_pos)
         temp_list[0] += 4
         start_pos = tuple(temp_list)
