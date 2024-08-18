@@ -95,7 +95,7 @@ text_mask = create_mask(text, [inky_display.WHITE])
 
 # Load our backdrop image
 micro_font_sprites = Image.open(os.path.join(PATH, "resources/microFontTemplate.png")).resize(inky_display.resolution)
-destination_image = Image.new('1', (212, 104), color=1)
+destination_image = Image.new('P', (250, 122))
 
 # Grab the current date, and prepare our calendar
 cal = calendar.Calendar()
