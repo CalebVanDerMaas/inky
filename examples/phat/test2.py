@@ -10,9 +10,9 @@ inky_display.set_border(inky_display.WHITE)
 image = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
 image.putpalette((255, 255, 255, 0, 0, 0, 255, 0, 0) + (0, 0, 0) * 252)
 
-# Fill the image with white
+# Fill the image with white (index 0 in our palette)
 draw = ImageDraw.Draw(image)
-draw.rectangle((0, 0, inky_display.WIDTH, inky_display.HEIGHT), fill=0)  # 0 is white in this palette
+draw.rectangle((0, 0, inky_display.WIDTH, inky_display.HEIGHT), fill=0)
 
 # Load the font sprites
 PATH = os.path.dirname(__file__)
@@ -31,7 +31,7 @@ def draw_text(input_string, start_pos):
             image.paste(1, current_pos, char_image)
         current_pos = (current_pos[0] + 4, current_pos[1])
 
-outputString = "Test: The quick brown fox jumps over the lazy dog."
+outputString = "Test The quick brown fox jumps over the lazy dog."
 # Calculate the middle of the screen, adjusting for text length
 start_x = (inky_display.WIDTH - len(outputString) * 4) // 2
 start_y = inky_display.HEIGHT // 2
