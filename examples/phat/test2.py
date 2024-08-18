@@ -6,9 +6,13 @@ from inky.auto import auto
 inky_display = auto(ask_user=True, verbose=True)
 inky_display.set_border(inky_display.WHITE)
 
-# Create a new black and white image
-image = Image.new("1", (inky_display.WIDTH, inky_display.HEIGHT), color=1)  # 1 is white in mode "1"
+# Create a new palette image
+image = Image.new("P", (inky_display.WIDTH, inky_display.HEIGHT))
+image.putpalette((255, 255, 255, 0, 0, 0, 255, 0, 0) + (0, 0, 0) * 252)
+
+# Fill the image with white
 draw = ImageDraw.Draw(image)
+draw.rectangle((0, 0, inky_display.WIDTH, inky_display.HEIGHT), fill=0)  # 0 is white in this palette
 
 # Load the font sprites
 PATH = os.path.dirname(__file__)
@@ -23,18 +27,19 @@ def draw_text(input_string, start_pos):
         if char in microFontDict:
             crop_region = microFontDict[char]
             char_image = micro_font_sprites.crop(crop_region)
-            image.paste(char_image, current_pos)
+            # Use the character image as a mask to paste black (1) onto the main image
+            image.paste(1, current_pos, char_image)
         current_pos = (current_pos[0] + 4, current_pos[1])
 
-outputString = "Test The quick brown fox jumps over the lazy dog."
+outputString = "Test: The quick brown fox jumps over the lazy dog."
 # Calculate the middle of the screen, adjusting for text length
 start_x = (inky_display.WIDTH - len(outputString) * 4) // 2
 start_y = inky_display.HEIGHT // 2
 draw_text(outputString, (start_x, start_y))
 
 # Draw debug information
-draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=0)
-draw.text((2, inky_display.HEIGHT - 10), f"Text start: {start_x},{start_y}", fill=0)
+draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=1)
+draw.text((2, inky_display.HEIGHT - 10), f"Text start: {start_x},{start_y}", fill=1)
 
 # Save the result image for debugging
 image.save("debug_output.png", "PNG")
