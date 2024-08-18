@@ -4,6 +4,8 @@ import socket
 import time
 from datetime import datetime
 from update_display import draw_text
+from PIL import Image, ImageDraw, ImageOps
+from inky.auto import auto
 
 # Set up the display
 inky_display = auto(ask_user=True, verbose=True)
