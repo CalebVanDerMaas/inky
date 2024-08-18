@@ -94,13 +94,30 @@ text_mask = create_mask(text, [inky_display.WHITE])
 # See: http://pillow.readthedocs.io/en/3.1.x/reference/Image.html?highlight=paste#PIL.Image.Image.paste
 
 # Load our backdrop image
-img = Image.open(os.path.join(PATH, "resources/profPicInky.png")).resize(inky_display.resolution)
-draw = ImageDraw.Draw(img)
+micro_font_sprites = Image.open(os.path.join(PATH, "resources/microFontTemplate.png")).resize(inky_display.resolution)
+destination_image = Image.new('1', (212, 104), color=1)
 
-# # Grab the current date, and prepare our calendar
-# cal = calendar.Calendar()
-# now = datetime.datetime.now()
-# dates = cal.monthdatescalendar(now.year, now.month)
+# Grab the current date, and prepare our calendar
+cal = calendar.Calendar()
+now = datetime.datetime.now()
+dates = cal.monthdatescalendar(now.year, now.month)
+#------------------------------------
+
+microFontDict = {'a': (0, 0, 4, 4), 'b': (4, 0, 8, 4), 'c': (8, 0, 12, 4), 'd': (12, 0, 16, 4,), 'e':(16, 0, 20, 4), 'f': (20, 0, 24, 4), 'g': (24, 0, 28, 4), 'h': (28, 0, 32, 4), 'i': (32, 0, 36, 4), 'j': (36, 0, 40, 4), 'k': (40, 0, 44, 4), 'l': (44, 0, 48, 4), 'm': (48, 0, 52, 4), 'n':(52, 0, 56, 4), 'o':(56, 0, 60, 4), 'p': (60, 0, 64, 4), 'q': (64, 0, 68, 4), 'r': (68, 0, 72, 4), 's': (72, 0, 76, 4), 't': (76, 0, 80, 4), 'u': (80, 0, 84, 4), 'v': (84, 0, 88, 4), 'w': (88, 0, 92, 4), 'x':(92, 0, 96, 4), 'y': (96, 0, 100, 4), 'z':(100, 0, 104, 4), '.':(104, 4, 108, 8)}
+
+outputString = "This is a test. The quick brown fox jumps over the lazy dog."
+
+def build_image(input_string, start_pos, dest_image):
+    lower_string = input_string.lower()
+    for char in lower_string:
+        crop_region = microFontDict[char]
+        dest_image.paste(crop_region, start_pos)
+        temp_list = list(start_pos)
+        temp_list[0] += 4
+        start_pos = tuple(temp_list)
+    return dest_image
+
+destination_image = build_image(outputString, (0,0), destination_image)
 
 # col_w = 20
 # col_h = 13
@@ -167,7 +184,7 @@ draw = ImageDraw.Draw(img)
 #     o_x += col_w + 1
 #     draw.line((o_x, cal_y, o_x, cal_h))
 
-# # Draw the horizontal lines which separate the rows
+# #Draw the horizontal lines which separate the rows
 # for y in range(rows):
 #     o_y = (col_h + 1) * y
 #     o_y += cal_y + col_h + 1
@@ -195,5 +212,5 @@ draw = ImageDraw.Draw(img)
 #             print_number((x + 3, y + 3), day.day, inky_display.WHITE if day.month == now.month else inky_display.RED)
 
 # # Display the completed calendar on Inky pHAT
-inky_display.set_image(img)
+inky_display.set_image(destination_image)
 inky_display.show()
