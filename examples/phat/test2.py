@@ -1,10 +1,11 @@
 import os
 from PIL import Image, ImageDraw
 from inky.auto import auto
+import time
 
 # Set up the display
 inky_display = auto(ask_user=True, verbose=True)
-inky_display.set_border(inky_display.BLACK)
+inky_display.set_border(inky_display.WHITE)
 
 # Load the background template and font sprites
 PATH = os.path.dirname(__file__)
@@ -23,20 +24,20 @@ def build_image(input_string, start_pos):
             char_image = micro_font_sprites.crop(crop_region)
             
             # Create a mask for the character
-            mask = Image.new("1", char_image.size, 1)
+            mask = Image.new("1", char_image.size, 0)
             for x in range(char_image.width):
                 for y in range(char_image.height):
                     if char_image.getpixel((x, y)) == (0, 0, 0):  # Assuming black is the text color
-                        mask.putpixel((x, y), 0)
+                        mask.putpixel((x, y), 1)
             
             # Paste the character onto the background
-            background.paste(inky_display.BLACK, (current_pos[0], current_pos[1], current_pos[0] + char_image.width, current_pos[1] + char_image.height), mask)
+            background.paste((0, 0, 0), (current_pos[0], current_pos[1], current_pos[0] + char_image.width, current_pos[1] + char_image.height), mask)
         
         current_pos = (current_pos[0] + 4, current_pos[1])
     
     # Draw debug information
-    draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=inky_display.BLACK)
-    draw.text((2, inky_display.HEIGHT - 10), f"Text start: {start_pos}", fill=inky_display.BLACK)
+    draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=(200, 200, 200))
+    draw.text((2, inky_display.HEIGHT - 10), f"Text start: {start_pos}", fill=(100, 100, 100))
     
     return background
 
@@ -60,3 +61,6 @@ inky_display.show()
 
 print(f"Text started at position: ({start_x}, {start_y})")
 print("Debug image saved as 'debug_output.png'")
+print("Waiting for display refresh...")
+time.sleep(10)  # Wait for 10 seconds
+print("If the display is still white, there might be an issue with the display driver or hardware.")
