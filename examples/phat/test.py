@@ -6,6 +6,9 @@ from datetime import datetime
 from update_display import draw_text
 from PIL import Image, ImageDraw, ImageOps
 from inky.auto import auto
+import os
+import calendar
+import datetime
 
 # Set up the display
 inky_display = auto(ask_user=True, verbose=True)
