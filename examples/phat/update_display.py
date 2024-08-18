@@ -1,10 +1,9 @@
 import os
 from PIL import Image, ImageDraw, ImageOps
 from inky.auto import auto
-
 import calendar
 import datetime
-import os
+
 
 cal = calendar.Calendar()
 now = datetime.datetime.now()
