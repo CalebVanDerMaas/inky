@@ -6,6 +6,7 @@ import datetime
 from fetch_gps import fetch_gps_data
 import random
 import time
+from collections import deque
 
 
 cal = calendar.Calendar()
@@ -63,10 +64,19 @@ for attempt in range(60):
 
 if gps_data:
     lat, lon, timestamp = gps_data
-    outputString = f"\nLat:{lat:.6f},Lon:{lon:.6f},Time:{timestamp}"
+    data_string = f"Lat:{lat:.6f},Lon:{lon:.6f},Time:{timestamp}"
 else:
-    outputString = f"\nLat:N/A,Lon:N/A,Time:{now}"
+    data_string = f"Lat:N/A,Lon:N/A,Time:{now}"
 
+# Open the file in read mode
+with open('GPS_DATA.txt', 'r') as file:
+    last_line = deque(file, maxlen=1)
+    first_word = text.split()[0]
+    latest_number = int(first_word)
+
+latest_number += 1 
+
+output_string = "\n" + str(latest_number) + " " + data_string
 # Appending to a file
 with open('GPS_DATA.txt', 'a') as file:
     file.write(outputString)
@@ -74,7 +84,7 @@ with open('GPS_DATA.txt', 'a') as file:
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
     lines = file.readlines()  # Read all lines into a list
-    last_30_lines = lines[-30:]  # Slice the last 30 lines
+    last_30_lines = deque(file, maxlen=30)
 
 start_x = 1
 start_y = 1
