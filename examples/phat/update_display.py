@@ -40,6 +40,15 @@ def draw_text(input_string, start_pos):
             image.paste(0, current_pos, char_image)
         current_pos = (current_pos[0] + 4, current_pos[1])
 
+random_number = random.randint(1, 3)
+GPS_load_imgPath = "GPSLoad" + random_number + ".png"
+
+GPS_load_img = Image.open(f"resources/{GPS_load_imgPath}")
+
+inky_display.set_image(GPS_load_img)
+inky_display.show()
+
+time.sleep(6)
 
 gpt_data = None
 
@@ -52,9 +61,9 @@ for attempt in range(60):
 
 if gps_data:
     lat, lon, timestamp = gps_data
-    outputString = f"\nLat: {lat:.6f}, Lon: {lon:.6f}, Time: {timestamp}"
+    outputString = f"\nLat:{lat:.6f},Lon:{lon:.6f},Time:{timestamp}"
 else:
-    outputString = f"\nLat: N/A, Lon: N/A, Time: {now}"
+    outputString = f"\nLat:N/A,Lon:N/A,Time:{now}"
 
 # Appending to a file
 with open('GPS_DATA.txt', 'a') as file:
