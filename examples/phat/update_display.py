@@ -72,11 +72,12 @@ else:
 with open('GPS_DATA.txt', 'r') as file:
     last_line = deque(file, maxlen=1)
     first_word = last_line[0].strip().split()[0]
+    print(first_word)
     latest_number = int(first_word)
 
 latest_number += 1 
 
-output_string = "\n" + str(latest_number) + " " + data_string
+output_string = str(latest_number) + " " + data_string
 # Appending to a file
 with open('GPS_DATA.txt', 'a') as file:
     file.write(output_string)
