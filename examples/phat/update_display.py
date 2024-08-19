@@ -84,7 +84,6 @@ with open('GPS_DATA.txt', 'a') as file:
 
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
-    lines = file.readlines()  # Read all lines into a list
     last_30_lines = deque(file, maxlen=30)
 
 start_x = 1

@@ -51,7 +51,6 @@ def main():
             print(f"Latitude: {lat:.6f}, Longitude: {lon:.6f}, Timestamp: {timestamp}")
         else:
             print("Failed to fetch GPS data")
-        
         time.sleep(5)  # Wait for 5 seconds before the next request
 
 if __name__ == "__main__":
