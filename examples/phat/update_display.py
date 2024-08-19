@@ -5,6 +5,7 @@ import calendar
 import datetime
 from fetch_gps import fetch_gps_data
 import random
+import time
 
 
 cal = calendar.Calendar()
