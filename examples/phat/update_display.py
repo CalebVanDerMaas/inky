@@ -42,7 +42,7 @@ def draw_text(input_string, start_pos):
         current_pos = (current_pos[0] + 4, current_pos[1])
 
 random_number = random.randint(1, 3)
-GPS_load_imgPath = "GPSLoad" + random_number + ".png"
+GPS_load_imgPath = "GPSLoad" + str(random_number) + ".png"
 
 GPS_load_img = Image.open(f"resources/{GPS_load_imgPath}")
 
