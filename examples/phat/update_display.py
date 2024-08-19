@@ -4,6 +4,7 @@ from inky.auto import auto
 import calendar
 import datetime
 from fetch_gps import fetch_gps_data
+import random
 
 
 cal = calendar.Calendar()
