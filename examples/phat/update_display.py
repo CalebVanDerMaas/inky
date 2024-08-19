@@ -71,7 +71,7 @@ else:
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
     last_line = deque(file, maxlen=1)
-    first_word = last_line.split()[0]
+    first_word = last_line[0].strip().split()[0]
     latest_number = int(first_word)
 
 latest_number += 1 
