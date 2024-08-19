@@ -79,7 +79,7 @@ latest_number += 1
 output_string = "\n" + str(latest_number) + " " + data_string
 # Appending to a file
 with open('GPS_DATA.txt', 'a') as file:
-    file.write(outputString)
+    file.write(output_string)
 
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
