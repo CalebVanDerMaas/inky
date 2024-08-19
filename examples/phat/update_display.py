@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageOps
 from inky.auto import auto
 import calendar
 import datetime
+from fetch_gps import fetch_gps_data
 
 
 cal = calendar.Calendar()
@@ -39,11 +40,38 @@ def draw_text(input_string, start_pos):
             image.paste(0, current_pos, char_image)
         current_pos = (current_pos[0] + 4, current_pos[1])
 
-outputString = str(now)
-# Calculate the middle of the screen, adjusting for text length
-start_x = 0
-start_y = 0
-draw_text(outputString, (start_x, start_y))
+
+gpt_data = None
+
+for attempt in range(60):
+    gps_data = fetch_gps_data()
+    if gps_data:
+        break
+    else:
+        print(f"Trying again")
+
+if gps_data:
+    lat, lon, timestamp = gps_data
+    outputString = f"\nLat: {lat:.6f}, Lon: {lon:.6f}, Time: {timestamp}"
+else:
+    outputString = f"\nLat: N/A, Lon: N/A, Time: {now}"
+
+# Appending to a file
+with open('GPS_DATA.txt', 'a') as file:
+    file.write(outputString)
+
+# Open the file in read mode
+with open('GPS_DATA.txt', 'r') as file:
+    lines = file.readlines()  # Read all lines into a list
+    last_30_lines = lines[-30:]  # Slice the last 30 lines
+
+start_x = 1
+start_y = 1
+
+# Now you can work with last_30_lines
+for line in last_30_lines:
+    draw_text(line, (start_x, start_y))
+    start_y +=4
 
 # Draw debug information
 draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=0)
