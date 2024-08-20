@@ -15,7 +15,8 @@ api_key = os.getenv('OPEN_API_KEY')
 
 client = OpenAI(
     organization='org-S1Zw4T83HJpCOBs0Xt2ybEGT',
-    project='proj_2zk2JdLG6inpTQANIaSVEGeK'
+    project='proj_2zk2JdLG6inpTQANIaSVEGeK',
+    api_key=api_key
 )
 
 
