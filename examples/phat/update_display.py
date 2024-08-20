@@ -7,6 +7,13 @@ from fetch_gps import fetch_gps_data
 import random
 import time
 from collections import deque
+from openai import OpenAI
+
+
+client = OpenAI(
+    organization='org-S1Zw4T83HJpCOBs0Xt2ybEGT',
+    project='proj_2zk2JdLG6inpTQANIaSVEGeK'
+)
 
 
 cal = calendar.Calendar()
@@ -68,12 +75,66 @@ if gps_data:
 else:
     data_string = f"Lat:N/A,Lon:N/A,Time:{now}"
 
+def generate_micro_message():
+    # Create user message for micro-message assistant
+    client.beta.threads.messages.create(
+        "thread_Y3yoH0mjloc75XRZoX26q5HR",
+        role="user",
+        content="Create a new micro message."
+    )
+
+    # Start the run
+    run = client.beta.threads.runs.create(
+        thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR",
+        assistant_id="asst_dkT1sDyjExP1WUJWBYrN1sFv"
+    )
+
+    run_id = run.id
+    
+    # Check run status
+    def check_run(run_id):
+        run_check = client.beta.threads.runs.retrieve(
+            thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR",
+            run_id=run_id
+        )
+        return run_check.status
+
+    # Wait for completion with timeout
+    timeout = 60  # 60 seconds timeout
+    start_time = time.time()
+    while True:
+        run_status = check_run(run_id)
+        if run_status == "completed":
+            # Retrieve and return the generated message
+            messages = client.beta.threads.messages.list(
+                thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR"
+            )
+            return messages.data[0].content[0].text.value
+        elif run_status in ["failed", "cancelled", "expired"]:
+            raise Exception(f"Run failed with status: {run_status}")
+        elif time.time() - start_time > timeout:
+            raise Exception("Timeout waiting for response")
+        else:
+            time.sleep(1)  # Wait for 1 second before checking again
+
+# Usage in your main code
+try:
+    micro_message = generate_micro_message()
+    print(f"Generated micro message: {micro_message}")
+    # Use micro_message in your display logic
+except Exception as e:
+    print(f"Error generating micro message: {e}")
+    micro_message = "Error: Unable to generate message"  # Fallback message
+
+clean_micro_message = micro_message.strip('"')
+final_micro_message = "\n" + clean_micro_message
+
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
-    last_line = deque(file, maxlen=1)
-    first_word = last_line[0].strip().split()[0]
-    print(first_word)
-    latest_number = int(first_word)
+    last_lines = deque(file, maxlen=2)
+    index = last_lines[0].strip().split()[0]
+    print(index)
+    latest_number = int(index)
 
 latest_number += 1 
 
@@ -81,6 +142,7 @@ output_string = "\n" + str(latest_number) + " " + data_string
 # Appending to a file
 with open('GPS_DATA.txt', 'a') as file:
     file.write(output_string)
+    file.write(final_micro_message)
 
 # Open the file in read mode
 with open('GPS_DATA.txt', 'r') as file:
