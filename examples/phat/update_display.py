@@ -8,7 +8,10 @@ import random
 import time
 from collections import deque
 from openai import OpenAI
+from dotenv import load_dotenv
 
+load_dotenv()
+api_key = os.getenv('OPEN_API_KEY')
 
 client = OpenAI(
     organization='org-S1Zw4T83HJpCOBs0Xt2ybEGT',

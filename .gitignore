@@ -29,3 +29,4 @@ packaging/*tar.xz
 .DS_Store
 sphinx.virtualenv
 tempenv/
+.env
