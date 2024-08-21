@@ -64,12 +64,38 @@ def draw_text(input_string, start_pos):
         current_pos = (current_pos[0] + 4, current_pos[1])
 
 def generate_micro_message():
-            # Create user message for micro-message assistant
-            client.beta.threads.messages.create(
-                "thread_Y3yoH0mjloc75XRZoX26q5HR",
-                role="user",
-                content="Create a new micro message."
+    # Create user message for micro-message assistant
+    client.beta.threads.messages.create(
+        "thread_Y3yoH0mjloc75XRZoX26q5HR",
+        role="user",
+        content="Create a new micro message."
+    )
+
+    # Start the run
+    run = client.beta.threads.runs.create(
+        thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR",
+        assistant_id="asst_dkT1sDyjExP1WUJWBYrN1sFv"
+    )
+
+    run_id = run.id
+
+    # Wait for completion with timeout
+    timeout = 60  # 60 seconds timeout
+    start_time = time.time()
+    while True:
+        run_status = check_run(run_id)
+        if run_status == "completed":
+            # Retrieve and return the generated message
+            messages = client.beta.threads.messages.list(
+                thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR"
             )
+            return messages.data[0].content[0].text.value
+        elif run_status in ["failed", "cancelled", "expired"]:
+            raise Exception(f"Run failed with status: {run_status}")
+        elif time.time() - start_time > timeout:
+            raise Exception("Timeout waiting for response")
+        else:
+            time.sleep(1)  # Wait for 1 second before checking again
 
 # Check run status
 def check_run(run_id):
@@ -113,33 +139,6 @@ while True:
         else:
             data_string = f"Lat:N/A,Lon:N/A,Time:{now}"
 
-        
-
-            # Start the run
-            run = client.beta.threads.runs.create(
-                thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR",
-                assistant_id="asst_dkT1sDyjExP1WUJWBYrN1sFv"
-            )
-
-            run_id = run.id
-
-            # Wait for completion with timeout
-            timeout = 60  # 60 seconds timeout
-            start_time = time.time()
-            while True:
-                run_status = check_run(run_id)
-                if run_status == "completed":
-                    # Retrieve and return the generated message
-                    messages = client.beta.threads.messages.list(
-                        thread_id="thread_Y3yoH0mjloc75XRZoX26q5HR"
-                    )
-                    return messages.data[0].content[0].text.value
-                elif run_status in ["failed", "cancelled", "expired"]:
-                    raise Exception(f"Run failed with status: {run_status}")
-                elif time.time() - start_time > timeout:
-                    raise Exception("Timeout waiting for response")
-                else:
-                    time.sleep(1)  # Wait for 1 second before checking again
 
         # Usage in your main code
         try:
