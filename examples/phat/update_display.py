@@ -120,6 +120,10 @@ def try_fetch_gps_data(attempts=60, delay=5):
         time.sleep(delay)
     return None
 
+def safe_shutdown()
+    print("Shutting down safely...")
+    os.system('sudo shutdown')
+
 random_number = random.randint(1, 3)
 GPS_load_imgPath = "GPSLoad" + str(random_number) + ".png"
 
