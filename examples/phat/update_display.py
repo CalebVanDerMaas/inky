@@ -143,7 +143,7 @@ while True:
         inky_display.show()
         time.sleep(7)
 
-        gpt_data = try_fetch_gps_data()
+        gps_data = try_fetch_gps_data()
 
         if gps_data:
             lat, lon, timestamp = gps_data
