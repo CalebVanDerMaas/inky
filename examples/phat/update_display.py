@@ -105,6 +105,21 @@ def check_run(run_id):
     )
     return run_check.status
 
+def try_connect_internet(attempts=60, delay=5):
+    for _ in range(attempts):
+        if check_internet_connection():
+            return True
+        time.sleep(delay)
+    return False
+
+def try_fetch_gps_data(attempts=60, delay=5):
+    for _ in range(attempts):
+        gps_data = fetch_gps_data()
+        if gps_data:
+            return gps_data
+        time.sleep(delay)
+    return None
+
 random_number = random.randint(1, 3)
 GPS_load_imgPath = "GPSLoad" + str(random_number) + ".png"
 
@@ -117,85 +132,73 @@ inky_display.show()
 time.sleep(10)
 
 while True:
+    internet_connected = try_connect_internet()
 
-    if check_internet_connection():
-        
+    if internet_connected:
         inky_display.set_image(GPS_load_img)
         inky_display.show()
         time.sleep(7)
 
-        gpt_data = None
-
-        for attempt in range(60):
-            gps_data = fetch_gps_data()
-            if gps_data:
-                break
-            else:
-                print(f"Trying again")
+        gpt_data = try_fetch_gps_data()
 
         if gps_data:
             lat, lon, timestamp = gps_data
             data_string = f"Lat:{lat:.6f},Lon:{lon:.6f},Time:{timestamp}"
         else:
-            data_string = f"Lat:N/A,Lon:N/A,Time:{now}"
-
-
-        # Usage in your main code
-        try:
-            micro_message = generate_micro_message()
-            print(f"Generated micro message: {micro_message}")
-            # Use micro_message in your display logic
-        except Exception as e:
-            print(f"Error generating micro message: {e}")
-            micro_message = "No message this time..."  # Fallback message
-
-        clean_micro_message = micro_message.strip('"')
-        final_micro_message = "\n" + clean_micro_message
-
-        # Open the file in read mode
-        with open('GPS_DATA.txt', 'r') as file:
-            last_lines = deque(file, maxlen=2)
-            index = last_lines[0].strip().split()[0]
-            print(index)
-            latest_number = int(index)
-
-        latest_number += 1 
-
-        output_string = "\n" + str(latest_number) + " " + data_string
-        # Appending to a file
-        with open('GPS_DATA.txt', 'a') as file:
-            file.write(output_string)
-            file.write(final_micro_message)
-
-        # Open the file in read mode
-        with open('GPS_DATA.txt', 'r') as file:
-            last_30_lines = deque(file, maxlen=30)
-
-        start_x = 1
-        start_y = 1
-
-        # Now you can work with last_30_lines
-        for line in last_30_lines:
-            draw_text(line, (start_x, start_y))
-            start_y +=4
-
-        # Draw debug information
-        draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=0)
-
-        # Save the result image for debugging
-        image.save("debug_output.png", "PNG")
-
-        try:
-            # Display the image
-            inky_display.set_image(image)
-            inky_display.show()
-            print("Image sent to display successfully.")
-        except Exception as e:
-            print(f"Error displaying image: {e}")
-
-        print(f"Text started at position: ({start_x}, {start_y})")
-        print("Debug image saved as 'debug_output.png'")
-    else:
-        print("Not connected to internet yet. Re")
+            data_string = f"Lat:N/A,Lon:N/A,Time:{time.strftime('%Y-%m-%d %H:%M:%S')}"
     
-    time.sleep(5)
+    else:
+        data_string = f"Lat:N/A,Lon:N/A,Time:{time.strftime('%Y-%m-%d %H:%M:%S')}"
+
+    # Generate micro message
+    try:
+        micro_message = generate_micro_message()
+        print(f"Generated micro message: {micro_message}")
+    except Exception as e:
+        print(f"Error generating micro message: {e}")
+        micro_message = "No message this time..."
+
+    clean_micro_message = micro_message.strip('"')
+    final_micro_message = "\n" + clean_micro_message
+
+    # Open the file in read mode to get the last index number
+    with open('GPS_DATA.txt', 'r') as file:
+        last_lines = deque(file, maxlen=2)
+        index = last_lines[0].strip().split()[0]
+        latest_number = int(index)
+
+    latest_number += 1
+    output_string = "\n" + str(latest_number) + " " + data_string
+
+    # Append new data to the file
+    with open('GPS_DATA.txt', 'a') as file:
+        file.write(output_string)
+        file.write(final_micro_message)
+
+    # Display the last 30 lines
+    with open('GPS_DATA.txt', 'r') as file:
+        last_30_lines = deque(file, maxlen=30)
+
+    start_x = 1
+    start_y = 1
+
+    for line in last_30_lines:
+        draw_text(line, (start_x, start_y))
+        start_y += 4
+
+    draw.rectangle([0, 0, inky_display.WIDTH - 1, inky_display.HEIGHT - 1], outline=0)
+
+    image.save("debug_output.png", "PNG")
+
+    try:
+        inky_display.set_image(image)
+        inky_display.show()
+        print("Image sent to display successfully.")
+    except Exception as e:
+        print(f"Error displaying image: {e}")
+
+    print(f"Text started at position: ({start_x}, {start_y})")
+    print("Debug image saved as 'debug_output.png'")
+
+    safe_shutdown()
+    break  # End the loop
