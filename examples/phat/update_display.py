@@ -120,7 +120,7 @@ def try_fetch_gps_data(attempts=60, delay=5):
         time.sleep(delay)
     return None
 
-def safe_shutdown()
+def safe_shutdown():
     print("Shutting down safely...")
     os.system('sudo shutdown')
 
