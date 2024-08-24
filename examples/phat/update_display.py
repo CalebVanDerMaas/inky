@@ -122,7 +122,6 @@ def try_fetch_gps_data(attempts=60, delay=5):
 
 def safe_shutdown():
     print("Shutting down safely...")
-    os.system('sudo systemctl stop journal_entry.service')
     os.system('sudo shutdown')
 
 random_number = random.randint(1, 3)
@@ -206,5 +205,5 @@ while True:
     print("Debug image saved as 'debug_output.png'")
 
     safe_shutdown()
-    time.sleep(10)
+    time.sleep(20)
     break  # End the loop
