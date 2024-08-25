@@ -124,6 +124,18 @@ def safe_shutdown():
     print("Shutting down safely...")
     os.system('sudo shutdown')
 
+def commit_and_push_to_github():
+    try: 
+        subprocess.run(["git", "add", "GPS_DATA.txt"], check=True)
+
+        commit_message = f"Update GPS data on {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+
+        subprocess.run(["git", "push", "origin", "master"], check=True)
+        print("Successfully committed and pushed GPS data to GitHub.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while committing or pushing to GitHub: {e}")
+
 random_number = random.randint(1, 3)
 GPS_load_imgPath = "GPSLoad" + str(random_number) + ".png"
 
