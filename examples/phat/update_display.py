@@ -191,6 +191,8 @@ while True:
         file.write(output_string)
         file.write(final_micro_message)
 
+    commit_and_push_to_github()
+
     # Display the last 30 lines
     with open('GPS_DATA.txt', 'r') as file:
         last_30_lines = deque(file, maxlen=30)
